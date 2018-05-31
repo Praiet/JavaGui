@@ -9,8 +9,18 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.swt.widgets.TableColumn;
 
 public class Window extends ApplicationWindow {
+	private DataBindingContext m_bindingContext;
+	private Table table;
 
 	/**
 	 * Create the application window.
@@ -30,6 +40,22 @@ public class Window extends ApplicationWindow {
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
+		
+		table = new Table(container, SWT.BORDER | SWT.FULL_SELECTION);
+		table.setBounds(0, 0, 434, 188);
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
+		{
+			TableColumn tblclmnColumna = new TableColumn(table, SWT.NONE);
+			tblclmnColumna.setWidth(100);
+			tblclmnColumna.setText("Columna 1");
+		}
+		{
+			TableColumn tblclmnColumna_1 = new TableColumn(table, SWT.NONE);
+			tblclmnColumna_1.setWidth(100);
+			tblclmnColumna_1.setText("Columna 2");
+		}
+		m_bindingContext = initDataBindings();
 
 		return container;
 	}
@@ -76,14 +102,19 @@ public class Window extends ApplicationWindow {
 	 * @param args
 	 */
 	public static void main(String args[]) {
-		try {
-			Window window = new Window();
-			window.setBlockOnOpen(true);
-			window.open();
-			Display.getCurrent().dispose();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		Display display = Display.getDefault();
+		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			public void run() {
+				try {
+					Window window = new Window();
+					window.setBlockOnOpen(true);
+					window.open();
+					Display.getCurrent().dispose();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	/**
@@ -103,5 +134,9 @@ public class Window extends ApplicationWindow {
 	protected Point getInitialSize() {
 		return new Point(450, 300);
 	}
-
+	protected DataBindingContext initDataBindings() {
+		DataBindingContext bindingContext = new DataBindingContext();
+		//
+		return bindingContext;
+	}
 }
